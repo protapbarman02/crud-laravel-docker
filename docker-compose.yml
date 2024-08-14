@@ -1,0 +1,55 @@
+services:
+  php:
+    container_name: php
+    build: .
+    volumes: 
+      - ./web:/var/www/html
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql_db
+      - postgres_db
+
+  mysql_db:
+    container_name: mysql_db
+    image: mysql:8.0.39
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: crud_laravel
+      MYSQL_USER: admin 
+      MYSQL_PASSWORD : admin
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:5.2.1
+    ports:
+      - 8001:80
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - mysql_db
+
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:16.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: crud_laravel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+      
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.10
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8002:80"
+    depends_on:
+      - postgres_db
